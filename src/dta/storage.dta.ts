@@ -59,7 +59,6 @@ export class StorageDta {
                 ) TT0 WHERE TT0.Unidades > 0`);
             return result.recordset;
         } catch (error) {
-            console.log(error);
             throw {
                 error
             }
