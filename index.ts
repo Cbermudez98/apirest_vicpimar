@@ -19,7 +19,7 @@ export class Index {
         this.app.use("/api/v1", this.routes.initializeRoute());
         this.app.listen(this.app.get("port"), () => {
             console.log(`Server running at port ${this.port}`);
-        })
+        }).timeout = 120000;
     }
 }
 

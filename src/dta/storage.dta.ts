@@ -14,7 +14,7 @@ export class StorageDta {
         pool: {
           max: 10,
           min: 0,
-          idleTimeoutMillis: 1000000
+          idleTimeoutMillis: 120000
         },
         options: {
           encrypt: false, // for azure
