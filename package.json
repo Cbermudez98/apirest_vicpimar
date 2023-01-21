@@ -6,7 +6,8 @@
   "scripts": {
     "server:dev": "nodemon ./dist/index.js",
     "server:prod": "npm i && npx tsc && node ./dist/index.js",
-    "start:prod": "node ./dist/index.js"
+    "start:prod": "node ./dist/index.js",
+    "build:prod": "npm i && npx tsc"
   },
   "keywords": [],
   "author": "",
