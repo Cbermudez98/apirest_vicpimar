@@ -13,8 +13,8 @@ export class StorageController {
         return await this.storageDta.stock();
     }
 
-    public async dailySell() {
-        return await this.storageDta.dailySell();
+    public async dailySell(startDate: string, endDate: string) {
+        return await this.storageDta.dailySell(startDate, endDate);
     }
 
 }
