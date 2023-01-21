@@ -29,10 +29,10 @@ export class Routes {
             htpResponse.response(storageController.stock(), req, res);
         });
 
-        this.route.get("/dailySell", this.auth.validateToken(), (req: Request, res: Response) => {
+        this.route.get("/dailySell/:startDate/:endDate", this.auth.validateToken(), (req: Request, res: Response) => {
             const htpResponse = container.get<HttpResponse>(TYPES.HTTP_RESPONSE);
             const storageController = container.get<StorageController>(TYPES.STORAGE_CONTROLLER);
-            htpResponse.response(storageController.dailySell(), req, res);
+            htpResponse.response(storageController.dailySell(req.params.startDate, req.params.endDate), req, res);
         });
         return this.route;
     }
