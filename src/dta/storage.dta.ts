@@ -65,37 +65,16 @@ export class StorageDta {
         }
     }
 
-    public async dailySell() {
+    public async dailySell(startDate: string, endDate: string) {
         try {
-            await mssql.connect(this.sqlConfig);
-            const result = await mssql.query(`SELECT TT0.Fecha, TT0.Referencia, TT0.Bodega, CONVERT(NUMERIC(16,2),TT0.Cantidad/TT0.SalPackUn) [Unidades], TT0.Ingreso, TT0.Costo FROM (
-                SELECT 
-                T0.DocDate   [Fecha], 
-                T0.ItemCode  [Referencia], 
-                T0.Warehouse [Bodega],
-                CONVERT(NUMERIC(16,2),SUM((T0.OutQty-T0.InQty))) [Cantidad], 
-                T1.SalPackUn,  
-                CONVERT(NUMERIC(16,2),SUM((T0.OutQty-T0.InQty)*T0.Price)) [Ingreso],
-                CONVERT(NUMERIC(16,2),SUM((T0.OutQty-T0.InQty)*T0.CalcPrice)) [Costo]
-                FROM B1_OinmWithBinTransfer T0 INNER JOIN OITM T1 ON T0.ItemCode = T1.ItemCode
-                WHERE T0.DocDate = CONVERT(DATE,GETDATE()) AND T0.TransType IN (15,16,13,14) AND T1.ItmsGrpCod IN(102,113) AND T0.Warehouse = '01'
-                GROUP BY T0.DocDate, T0.ItemCode, T0.Warehouse, T1.SalPackUn
-                UNION ALL 
-                SELECT 
-                T0.DocDate   [Fecha], 
-                T0.ItemCode  [Referencia], 
-                T0.Warehouse [Bodega],
-                CONVERT(NUMERIC(16,2),SUM((T0.OutQty-T0.InQty))) [Cantidad], 
-                T1.SalPackUn,  
-                CONVERT(NUMERIC(16,2),SUM((T0.OutQty-T0.InQty)*T0.Price)) [Ingreso],
-                CONVERT(NUMERIC(16,2),SUM((T0.OutQty-T0.InQty)*T0.CalcPrice)) [Costo]
-                FROM B1_OinmWithBinTransfer T0 INNER JOIN OITM T1 ON T0.ItemCode = T1.ItemCode
-                WHERE T0.DocDate = CONVERT(DATE,GETDATE()) AND T0.TransType IN (15,16,13,14) AND T1.ItmsGrpCod IN(102,113) AND T0.Warehouse = '12'
-                GROUP BY T0.DocDate, T0.ItemCode, T0.Warehouse, T1.SalPackUn
-                ) TT0 --WHERE TT0.Cantidad <> 0
-                ORDER BY TT0.Bodega, TT0.Referencia`);
-                return result.recordset;
+            const pool = await mssql.connect(this.sqlConfig);
+            const result = await pool.request()
+                .input("Fecha_Inicial", mssql.SmallDateTime, startDate)
+                .input("Fecha_Final",mssql.SmallDateTime, endDate)
+                .execute("Ventas_Princing");
+            return result?.recordset || [];
         } catch (error) {
+            console.error(error);
             throw {
                 error
             }
